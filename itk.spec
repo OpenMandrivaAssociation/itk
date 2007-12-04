@@ -36,7 +36,7 @@ Source5:	topHat.tar.bz2
 # a tool to compare images - useful to run tests
 Source6:        http://insight-journal.org/documentation/CMake/ImageCompare.tar.bz2
 BuildRequires:	cmake >= 1.8.3
-BuildRequires:  XFree86-devel
+BuildRequires:  X11-devel
 BuildRequires:  png-devel
 BuildRequires:  tiff-devel
 BuildRequires:  zlib-devel
