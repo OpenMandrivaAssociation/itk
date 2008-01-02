@@ -53,6 +53,7 @@ BuildRequires:	fftw3-devel
 BuildRequires:	graphviz
 BuildRequires:  doxygen
 BuildRequires:  perl
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 ITK is an open-source software system to support the Visible Human Project. 
