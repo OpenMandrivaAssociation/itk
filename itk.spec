@@ -5,36 +5,23 @@
 %{?_with_patented: %{expand: %%global build_patented 1}}
 
 %define name	itk
-%define version 2.8.1
-%define release 3
+%define version 3.4.0
+%define release 1
 
-%define libname %mklibname %{name}
-%define libname_devel %mklibname %{name} -d
-%define namever %(echo %version | sed 's/\\./-/g')
-%define shortVersion %(echo %{version} | cut -d. -f1,2)
+%define libname		%mklibname %{name}
+%define develname	%mklibname %{name} -d
 
 Summary:	Medicine Insight Segmentation and Registration
 Name:		%{name}
 Version:	%{version}
 Release:	%mkrel %{release}
-License:	BSDish
+License:	BSD-like
 Group:		Sciences/Other
 URL:		http://www.itk.org
-Source0:	http://ovh.dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar.bz2
+Source0:	http://ovh.dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar.gz
 Source1:	http://ovh.dl.sourceforge.net/sourceforge/itk/ItkSoftwareGuide-2.4.0.pdf.bz2
 Patch10:	wrapping-convenience-patches.patch
 Patch11:	python-interface-patches.patch
-# enhance binary erosion and dilation
-Source2:	binaryErodeDilate.tar.bz2
-# enhance reconstruction
-Source3:	fastReconstruction.tar.bz2
-Patch30:	itk-headertest.patch
-# enhance grayscale dilation and erosion
-Source4:	histoErodeDilate.tar.bz2
-# fix bug in tophat and grayscale opening/closing
-Source5:	topHat.tar.bz2
-# a tool to compare images - useful to run tests
-Source6:        http://insight-journal.org/documentation/CMake/ImageCompare.tar.bz2
 BuildRequires:	cmake >= 1.8.3
 BuildRequires:  X11-devel
 BuildRequires:  png-devel
@@ -42,17 +29,10 @@ BuildRequires:  tiff-devel
 BuildRequires:  zlib-devel
 BuildRequires:  gcc-c++
 BuildRequires:	fftw3-devel
-# BuildRequires:  python-numarray-devel
-# BuildRequires:  python-devel
-# BuildRequires:  tcl tk
-# needed for backport to 2006.0
-# %if %mdkversion >= 200610
-# BuildRequires:  tk-devel
-# BuildRequires:  tcl-devel
-# %endif
 BuildRequires:	graphviz
 BuildRequires:  doxygen
 BuildRequires:  perl
+BuildRequires:	fontconfig
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -89,15 +69,14 @@ project is from the National Library of Medicine at the National Institutes
 of Health. NLM in turn was supported by member institutions of NIH (see
 sponsors).
 
-
-%package  -n %{libname_devel}
+%package  -n %{develname}
 Summary:	ITK header files for building C++ code
 Group:		Development/C++
 Requires:	gcc-c++ 
 Requires:	%{libname} = %{version}
 Provides:	%{name}-devel = %{version}-%{release}
 
-%description -n %{libname_devel}
+%description -n %{develname}
 ITK is an open-source software system to support the Visible Human Project. 
 Currently under active development, ITK employs leading-edge segmentation 
 and registration algorithms in two, three, and more dimensions.
@@ -242,26 +221,9 @@ sponsors).
 
 
 %prep
-
 %setup -q -n InsightToolkit-%{version}
-# %setup -q -n InsightToolkit-%{namever}
-# %setup -q -n Insight
 %patch10 -p0
 %patch11 -p0
-%patch30
-
-# install code fix/enhancements
-tar xvjf %{SOURCE2}
-tar xvjf %{SOURCE3}
-tar xvjf %{SOURCE4}
-tar xvjf %{SOURCE5}
-tar xvjf %{SOURCE6}
-
-cp -f binaryErodeDilate/itk* Code/BasicFilters
-cp -f fastReconstruction/itk* Code/BasicFilters
-cp -f histoErodeDilate/itk* Code/BasicFilters
-cp -f topHat/itk* Code/BasicFilters
-
 
 # doc
 bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
@@ -270,7 +232,6 @@ bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
 find -name CVS -type d | xargs rm -rf
 
 %build
-
 cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
       -DCMAKE_CXX_COMPILER:PATH=%{_bindir}/c++ \
       -DCMAKE_C_COMPILER:PATH=%{_bindir}/gcc \
@@ -319,78 +280,54 @@ cmake 	-DITK_USE_PATENTED:BOOL=ON \
 
 %make
 
-
-
-# build ImageCompare
-(
-cd ImageCompare
-cmake -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-      -DCMAKE_CXX_COMPILER:PATH=%{_bindir}/c++ \
-      -DCMAKE_C_COMPILER:PATH=%{_bindir}/gcc \
-      -DCMAKE_BUILD_TYPE:STRING=Release \
-      -DCMAKE_SKIP_RPATH:BOOL=ON \
-      -DITK_DIR:PATH=.. \
-.
-%make
-)
-
-
 # build docs
 mkdir -p Documentation/Doxygen
 doxygen doxygen.config
 
-
-
-
-
 %install
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 echo "build_java=%{build_java}"
 
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=%{buildroot}
 
 # fix lib path on x86_64
 %ifarch x86_64
-mv $RPM_BUILD_ROOT/%{_prefix}/lib $RPM_BUILD_ROOT/%{_libdir}
-ls $RPM_BUILD_ROOT/%{_libdir}/InsightToolkit/*.cmake | xargs perl -pi -e 's#/lib/#/lib64/#g'
+mv %{buildroot}/%{_prefix}/lib %{buildroot}/%{_libdir}
+ls %{buildroot}/%{_libdir}/InsightToolkit/*.cmake | xargs perl -pi -e 's#/lib/#/lib64/#g'
 %endif
 
 # install ld.so.conf path
-install -d -m 755 $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d
-cat > $RPM_BUILD_ROOT/%{_sysconfdir}/ld.so.conf.d/%{name}.conf <<_EOF
+install -d -m 755 %{buildroot}/%{_sysconfdir}/ld.so.conf.d
+cat > %{buildroot}/%{_sysconfdir}/ld.so.conf.d/%{name}.conf <<_EOF
 %{_libdir}/InsightToolkit
 _EOF
 
 # install docs
-install -d -m 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}-doc
-cp -a Documentation/Doxygen/html $RPM_BUILD_ROOT/%{_datadir}/%{name}-doc/api
+install -d -m 755 %{buildroot}/%{_datadir}/%{name}-doc
+cp -a Documentation/Doxygen/html %{buildroot}/%{_datadir}/%{name}-doc/api
 
 # install examples
-install -d -m 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}-examples/
-cp -a Testing $RPM_BUILD_ROOT/%{_datadir}/%{name}-examples/
-cp -a Examples $RPM_BUILD_ROOT/%{_datadir}/%{name}-examples/
+install -d -m 755 %{buildroot}/%{_datadir}/%{name}-examples/
+cp -a Testing %{buildroot}/%{_datadir}/%{name}-examples/
+cp -a Examples %{buildroot}/%{_datadir}/%{name}-examples/
 # get rid of unwanted files
-find $RPM_BUILD_ROOT/%{_datadir}/itk-examples/ -name "*.o" -exec rm {} \;
-find $RPM_BUILD_ROOT/%{_datadir}/itk-examples/ -name CMakeCache.txt -exec rm {} \;
-find $RPM_BUILD_ROOT/%{_datadir}/itk-examples/ -name Makefile -exec rm {} \;
-find $RPM_BUILD_ROOT/%{_datadir}/itk-examples/ -name DartTestfile.txt -exec rm {} \;
-find $RPM_BUILD_ROOT/%{_datadir}/itk-examples/ -name .NoDartCoverage -exec rm {} \;
-find $RPM_BUILD_ROOT/%{_datadir}/itk-examples/ -name "cmake.*" -exec rm {} \;
+find %{buildroot}/%{_datadir}/itk-examples/ -name "*.o" -exec rm {} \;
+find %{buildroot}/%{_datadir}/itk-examples/ -name CMakeCache.txt -exec rm {} \;
+find %{buildroot}/%{_datadir}/itk-examples/ -name Makefile -exec rm {} \;
+find %{buildroot}/%{_datadir}/itk-examples/ -name DartTestfile.txt -exec rm {} \;
+find %{buildroot}/%{_datadir}/itk-examples/ -name .NoDartCoverage -exec rm {} \;
+find %{buildroot}/%{_datadir}/itk-examples/ -name "cmake.*" -exec rm {} \;
 
 #install data
-mv $RPM_BUILD_ROOT/%{_datadir}/itk-examples/Testing/Data $RPM_BUILD_ROOT/%{_datadir}/%{name}-data
+mv %{buildroot}/%{_datadir}/itk-examples/Testing/Data %{buildroot}/%{_datadir}/%{name}-data
 
 #install tcl utils
-#cp Wrapping/CSwig/Tcl/itkutils.tcl $RPM_BUILD_ROOT/%{_libdir}/InsightToolkit/tcl/
-# rm -f $RPM_BUILD_ROOT/%{_libdir}/InsightToolkit/itkwish
-
-# install ImageCompare
-mkdir -p  $RPM_BUILD_ROOT/%{_bindir}
-cp ImageCompare/ImageCompare $RPM_BUILD_ROOT/%{_bindir}
+#cp Wrapping/CSwig/Tcl/itkutils.tcl %{buildroot}/%{_libdir}/InsightToolkit/tcl/
+# rm -f %{buildroot}/%{_libdir}/InsightToolkit/itkwish
 
 # multiarch support
-%multiarch_includes  $RPM_BUILD_ROOT/%{_includedir}/InsightToolkit/Utilities/itksys/FundamentalType.h
+%multiarch_includes  %{buildroot}/%{_includedir}/InsightToolkit/Utilities/itksys/FundamentalType.h
 
 
 %check
@@ -403,7 +340,7 @@ ctest -E 'itkGrayscaleMorphologicalClosingImageFilterTest|itkGrayscaleMorphologi
 
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %post -n %{libname} -p /sbin/ldconfig
 
@@ -416,13 +353,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.html 
 %doc Documentation/DeveloperList.txt
 %doc Copyright/*
+%dir %{_libdir}/InsightToolkit
 %{_libdir}/InsightToolkit/lib*.so.*
 %{_sysconfdir}/ld.so.conf.d/%{name}.conf
 
 
-%files -n %{libname_devel}
+%files -n %{develname}
 %defattr(0644,root,root,0755)
-%attr(0755,root,root) %{_bindir}/ImageCompare
+%attr(0755,root,root) %{_bindir}/*
 %{_includedir}/*
 %{_libdir}/InsightToolkit/*.cmake
 %{_libdir}/InsightToolkit/lib*.so
