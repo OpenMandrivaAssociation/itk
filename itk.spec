@@ -5,10 +5,11 @@
 %{?_with_patented: %{expand: %%global build_patented 1}}
 
 %define name	itk
-%define version 3.4.0
+%define version 3.8.0
 %define release 1
 
-%define libname		%mklibname %{name}
+%define	major		0
+%define libname		%mklibname %{name} %{major}
 %define develname	%mklibname %{name} -d
 
 Summary:	Medicine Insight Segmentation and Registration
@@ -21,7 +22,7 @@ URL:		http://www.itk.org
 Source0:	http://ovh.dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar.gz
 Source1:	http://ovh.dl.sourceforge.net/sourceforge/itk/ItkSoftwareGuide-2.4.0.pdf.bz2
 Patch10:	wrapping-convenience-patches.patch
-Patch11:	python-interface-patches.patch
+#Patch11:	python-interface-patches.patch
 BuildRequires:	cmake >= 1.8.3
 BuildRequires:  X11-devel
 BuildRequires:  png-devel
@@ -223,7 +224,7 @@ sponsors).
 %prep
 %setup -q -n InsightToolkit-%{version}
 %patch10 -p0
-%patch11 -p0
+#%patch11 -p0
 
 # doc
 bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
@@ -358,7 +359,7 @@ rm -rf %{buildroot}
 %doc Documentation/DeveloperList.txt
 %doc Copyright/*
 %dir %{_libdir}/InsightToolkit
-%{_libdir}/InsightToolkit/lib*.so.*
+%{_libdir}/InsightToolkit/lib*.so.%{major}*
 %{_sysconfdir}/ld.so.conf.d/%{name}.conf
 
 
