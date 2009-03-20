@@ -1,7 +1,7 @@
 %define build_patented	0
 %{?_with_patented: %{expand: %%global build_patented 1}}
 
-%define build_review	1
+%define build_review	0
 %{?_with_review: %{expand: %%global build_review 1}}
 
 %define build_examples	1
