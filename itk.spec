@@ -408,7 +408,7 @@ find -name CVS -type d | xargs rm -rf
 	-DITK_USE_SYSTEM_PNG=ON \
 	-DITK_USE_SYSTEM_ZLIB=ON
 
-%make
+make
 
 # build docs
 %if %{build_doc}
