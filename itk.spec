@@ -318,6 +318,7 @@ This package contains Tcl bindings for ITK.
 %dir %{itklibdir}/tcl
 %{itklibdir}/tcl/*
 %{itklibdir}/*Tcl*.so.*
+%{tcl_sitearch}/InsightToolkit
 
 %package	-n tcl-%{name}-devel
 Summary:	Tcl development files for ITK bindings
