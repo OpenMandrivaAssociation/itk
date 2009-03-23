@@ -460,15 +460,12 @@ _EOF
 # multiarch support
 %multiarch_includes  %{buildroot}/%{itkincludedir}/Utilities/itksys/FundamentalType.h
 
-# only cmake files there...
-mv -f %{buildroot}%{_libdir}/InsightToolkit/*.cmake %{buildroot}%{itklibdir}
-rmdir %{buildroot}%{_libdir}/InsightToolkit
-
 # add some links for the default target directories
 ln -sf %{itklibdir} %{buildroot}%{_libdir}/InsightToolkit
 ln -sf %{itkincludedir} %{buildroot}%{_includedir}/InsightToolkit
 
 %if %{build_python}
+   mkdir -p %{buildroot}%{python_sitelib}
    ln -sf %{itklibdir}/python %{buildroot}%{python_sitelib}/%{name}
 %endif
 
