@@ -470,7 +470,8 @@ ln -sf %{itkincludedir} %{buildroot}%{_includedir}/InsightToolkit
 %endif
 
 %if %{build_tcl}
-    mv -f %{buildroot}%{itklibdir}/itkwish* %{buildroot}%{_bindir}
+    mkdir -p %{buildroot}%{tcl_sitearch}
+    ln -sf %{itklibdir}/tcl %{buildroot}%{tcl_sitearch}/InsightToolkit
 %endif
 
 %clean
