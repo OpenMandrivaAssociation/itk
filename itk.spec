@@ -413,7 +413,6 @@ make
 
 # build docs
 %if %{build_doc}
-    cd build
     doxygen Utilities/Doxygen/doxygen.config
 %endif
 
