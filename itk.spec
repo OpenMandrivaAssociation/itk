@@ -47,6 +47,9 @@ BuildRequires:	fftw3-devel
 BuildRequires:	graphviz
 %if %{build_doc}
 BuildRequires:	doxygen
+# this should signficantly reduce number of pango-WARNING messages
+BuildRequires:	urw-fonts
+BuildRequires:	fontconfig
 %endif
 BuildRequires:	perl
 BuildRequires:	fontconfig
@@ -314,7 +317,7 @@ This package contains Tcl bindings for ITK.
 %files		-n tcl-%{name}
 %defattr(0644,root,root,0755)
 %{_bindir}/itkwish*
-%{itklibdir}/*.py
+%{itklibdir}/*.tcl
 %dir %{itklibdir}/tcl
 %{itklibdir}/tcl/*
 %{itklibdir}/*Tcl*.so.*
@@ -470,8 +473,11 @@ ln -sf %{itkincludedir} %{buildroot}%{_includedir}/InsightToolkit
 %endif
 
 %if %{build_tcl}
+    mkdir -p %{buildroot}%{_bindir}
     mkdir -p %{buildroot}%{tcl_sitearch}
     ln -sf %{itklibdir}/tcl %{buildroot}%{tcl_sitearch}/InsightToolkit
+    mv -f %{buildroot}/%{itklibdir}/itkwish-*  %{buildroot}/%{_bindir}
+    ln -sf itkwish %{buildroot}/%{_bindir}/itkwish*
 %endif
 
 %clean
