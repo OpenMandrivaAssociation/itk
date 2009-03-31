@@ -317,7 +317,6 @@ This package contains Tcl bindings for ITK.
 %files		-n tcl-%{name}
 %defattr(0644,root,root,0755)
 %{_bindir}/itkwish*
-%{itklibdir}/*.tcl
 %dir %{itklibdir}/tcl
 %{itklibdir}/tcl/*
 %{itklibdir}/*Tcl*.so.*
@@ -478,6 +477,7 @@ ln -sf %{itkincludedir} %{buildroot}%{_includedir}/InsightToolkit
     ln -sf %{itklibdir}/tcl %{buildroot}%{tcl_sitearch}/InsightToolkit
     mv -f %{buildroot}/%{itklibdir}/itkwish-*  %{buildroot}/%{_bindir}
     ln -sf itkwish %{buildroot}/%{_bindir}/itkwish*
+    rm -f %{buildroot}/%{itklibdir}/itkwish
 %endif
 
 %clean
