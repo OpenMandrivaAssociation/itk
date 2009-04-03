@@ -69,6 +69,7 @@ BuildRequires:	tk-devel >= 8.6
 BuildRequires:	tcl-devel >= 8.6
 %endif
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Epoch:		2
 
 Patch0:		InsightToolkit-3.10.0-build-install.patch
 Patch1:		itk-3.12.0-tcl8.6.patch
