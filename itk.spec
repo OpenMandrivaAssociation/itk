@@ -1,7 +1,7 @@
 %define build_patented	0
 %{?_with_patented: %{expand: %%global build_patented 1}}
 
-%define build_review	0
+%define build_review	1
 %{?_with_review: %{expand: %%global build_review 1}}
 
 %define build_examples	1
@@ -13,14 +13,14 @@
 %define build_java	0
 %{?_with_java: %{expand: %%global build_java 1}}
 
-%define build_python	1
+%define build_python	0
 %{?_with_python: %{expand: %%global build_python 1}}
 
-%define build_tcl	1
+%define build_tcl	0
 %{?_with_python: %{expand: %%global build_tcl 1}}
 
 %define name		itk
-%define version		3.12.0
+%define version		3.14.0
 %define libname		%mklibname %{name} 3
 %define develname	%mklibname %{name} -d
 %define short_version	%(echo %{version} | cut -d. -f1,2)
@@ -74,6 +74,7 @@ Epoch:		2
 Patch0:		InsightToolkit-3.10.0-build-install.patch
 Patch1:		itk-3.12.0-tcl8.6.patch
 Patch2:		itk-3.12.0-tk8.6.patch
+Patch3:		itk-3.14.0-slatec-versioned.patch
 
 %description
 ITK is an open-source software system to support the Visible Human Project. 
@@ -345,6 +346,7 @@ Tcl development files for ITK bindings.
 %patch0 -p0 -b build_install
 %patch1 -p1
 %patch2 -p1
+%patch3 -p0
 
 # doc
 bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
@@ -362,6 +364,7 @@ find -name CVS -type d | xargs rm -rf
 	-DITK_DATA_ROOT:PATH=%{itkdir} \
 %if %{build_review}
 	-DITK_USE_REVIEW:BOOL=ON \
+	-DITK_USE_CONSOLIDATED_MORPHOLOGY:BOOL=ON \
 %else
 	-DITK_USE_REVIEW:BOOL=OFF \
 %endif
@@ -412,7 +415,7 @@ find -name CVS -type d | xargs rm -rf
 	-DITK_USE_SYSTEM_PNG=ON \
 	-DITK_USE_SYSTEM_ZLIB=ON
 
-make
+%make
 
 # build docs
 %if %{build_doc}
@@ -480,6 +483,13 @@ ln -sf %{itkincludedir} %{buildroot}%{_includedir}/InsightToolkit
     ln -sf itkwish %{buildroot}/%{_bindir}/itkwish*
     rm -f %{buildroot}/%{itklibdir}/itkwish
 %endif
+
+%check
+
+cd build
+# set the lib path needed to run the tests
+export LD_LIBRARY_PATH=`pwd`/bin
+ctest 
 
 %clean
 rm -rf %{buildroot}
