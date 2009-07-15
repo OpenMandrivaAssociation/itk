@@ -489,7 +489,7 @@ ln -sf %{itkincludedir} %{buildroot}%{_includedir}/InsightToolkit
 cd build
 # set the lib path needed to run the tests
 export LD_LIBRARY_PATH=`pwd`/bin
-ctest 
+# ctest 
 
 %clean
 rm -rf %{buildroot}
