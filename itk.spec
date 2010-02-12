@@ -20,7 +20,7 @@
 %{?_with_python: %{expand: %%global build_tcl 1}}
 
 %define name		itk
-%define version		3.14.0
+%define version		3.16.0
 %define libname		%mklibname %{name} 3
 %define develname	%mklibname %{name} -d
 %define short_version	%(echo %{version} | cut -d. -f1,2)
@@ -71,7 +71,7 @@ BuildRequires:	tcl-devel >= 8.6
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Epoch:		2
 
-Patch0:		InsightToolkit-3.10.0-build-install.patch
+Patch0:		InsightToolkit-3.16.0-build-install.patch
 Patch1:		itk-3.12.0-tcl8.6.patch
 Patch2:		itk-3.12.0-tk8.6.patch
 Patch3:		itk-3.14.0-slatec-versioned.patch
@@ -343,10 +343,10 @@ Tcl development files for ITK bindings.
 %prep
 %setup -q -n InsightToolkit-%{version}
 
-%patch0 -p0 -b build_install
+%patch0 -p0 -b .build_install
 %patch1 -p1
 %patch2 -p1
-%patch3 -p0
+#patch3 -p0
 
 # doc
 bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
