@@ -133,9 +133,9 @@ sponsors).
 %package	-n %{develname}
 Summary:	ITK header files for building C++ code
 Group:		Development/C++
-Requires:	%{libname} = %{version}
-Provides:	%{name}-devel = %{version}
-Provides:	lib%{name}-devel = %{version}
+Requires:	%{libname} = %{version}-%{release}
+Provides:	%{name}-devel = %{version}-%{release}
+Provides:	lib%{name}-devel = %{version}-%{release}
 
 %description -n %{develname}
 ITK is an open-source software system to support the Visible Human Project. 
