@@ -7,7 +7,7 @@
 %define build_examples	1
 %{?_with_examples: %{expand: %%global build_examples 1}}
 
-%define build_doc	1
+%define build_doc	0
 %{?_with_doc: %{expand: %%global build_doc 1}}
 
 %define build_java	0
@@ -45,6 +45,7 @@ BuildRequires:	tiff-devel
 BuildRequires:	zlib-devel
 BuildRequires:	fftw3-devel
 BuildRequires:	graphviz
+BuildRequires:	libuuid-devel
 %if %{build_doc}
 BuildRequires:	doxygen
 # this should signficantly reduce number of pango-WARNING messages
@@ -133,7 +134,7 @@ sponsors).
 %package	-n %{develname}
 Summary:	ITK header files for building C++ code
 Group:		Development/C++
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{epoch}:%{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
 Provides:	lib%{name}-devel = %{version}-%{release}
 
