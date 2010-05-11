@@ -21,7 +21,7 @@
 
 %define name		itk
 %define version		3.16.0
-%define libname		%mklibname %{name} 3
+%define libname		%mklibname %{name} 4
 %define develname	%mklibname %{name} -d
 %define short_version	%(echo %{version} | cut -d. -f1,2)
 
