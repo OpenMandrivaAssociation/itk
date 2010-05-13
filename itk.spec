@@ -31,7 +31,7 @@
 
 Name:		%{name}
 Version:	%{version}
-Release:	%mkrel 2
+Release:	%mkrel 3
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
@@ -178,7 +178,7 @@ sponsors).
 %package	examples
 Summary:	C++, Tcl and Python example programs/scripts for ITK
 Group:		Development/C++
-Requires:	%{libname} = %{version}
+Requires:	%{libname} = %{epoch}:%{version}-%{release}
 Obsoletes:	%{name}-data
 
 %description examples
