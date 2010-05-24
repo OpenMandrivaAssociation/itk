@@ -444,7 +444,7 @@ install -d -m 755 %{buildroot}/%{_docdir}/%{name}
 %else
     tar Jxf %{SOURCE2} -C %{buildroot}%{_docdir}
     cp -fa Documentation/{README.html,InsightDeveloperStart.pdf,Style.pdf} \
-	ItkSoftwareGuide.pdf Copyright %{buildroot}%{_docdir}
+	ItkSoftwareGuide.pdf Copyright %{buildroot}%{_docdir}/%{name}
 %endif
 
 %if %{build_examples}
