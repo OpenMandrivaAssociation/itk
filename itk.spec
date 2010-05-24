@@ -31,13 +31,14 @@
 
 Name:		%{name}
 Version:	%{version}
-Release:	%mkrel 3
+Release:	%mkrel 4
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
 URL:		http://www.itk.org
 Source0:	http://dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar.gz
 Source1:	http://dl.sourceforge.net/sourceforge/itk/ItkSoftwareGuide-2.4.0.pdf.bz2
+Source2:	itk-3.16-doc.tar.lzma
 BuildRequires:	cmake >= 2.6.0
 BuildRequires:	X11-devel
 BuildRequires:	png-devel
@@ -206,8 +207,6 @@ sponsors).
 
 #---------------------------------------------------------------------------------
 
-%if %{build_doc}
-
 %package	doc
 Summary:	Documentation for ITK
 Group:		Development/C++
@@ -230,8 +229,6 @@ sponsors).
 %defattr(0644,root,root,0755)
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/*
-
-%endif
 
 #---------------------------------------------------------------------------------
 
@@ -435,8 +432,8 @@ cat > %{buildroot}/%{_sysconfdir}/ld.so.conf.d/%{_lib}%{name}.conf <<_EOF
 _EOF
 
 # install docs
+install -d -m 755 %{buildroot}/%{_docdir}/%{name}
 %if %{build_doc}
-    install -d -m 755 %{buildroot}/%{_docdir}/%{name}
     cp -a build/Utilities/Doxygen/html %{buildroot}/%{_docdir}/%{name}/api
     cp -fa	Documentation/InsightDeveloperStart.pdf			\
 		Documentation/Style.pdf					\
@@ -444,6 +441,10 @@ _EOF
 	%{buildroot}/%{_docdir}/%{name}
     cp -fa README.html Documentation/DeveloperList.txt Copyright	\
 	%{buildroot}/%{_docdir}/%{name}
+%else
+    tar Jxf %{SOURCE2} -C %{buildroot}%{_docdir}
+    cp -fa Documentation/{README.html,InsightDeveloperStart.pdf,Style.pdf} \
+	ItkSoftwareGuide.pdf Copyright %{buildroot}%{_docdir}
 %endif
 
 %if %{build_examples}
