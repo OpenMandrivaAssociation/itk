@@ -97,6 +97,7 @@ sponsors).
 %package	-n %{libname}
 Group:		System/Libraries
 Summary:	Medicine Insight Segmentation and Registration
+Obsoletes:	%mklibname %{name} 3
 Provides:	%{name} = %{version}-%{release}
 Provides:	itk = %{version}-%{release}
 
