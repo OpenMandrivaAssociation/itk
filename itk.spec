@@ -20,7 +20,7 @@
 %{?_with_python: %{expand: %%global build_tcl 1}}
 
 %define name		itk
-%define version		3.16.0
+%define version		3.20.0
 %define libname		%mklibname %{name} 4
 %define develname	%mklibname %{name} -d
 %define short_version	%(echo %{version} | cut -d. -f1,2)
@@ -31,14 +31,14 @@
 
 Name:		%{name}
 Version:	%{version}
-Release:	%mkrel 4
+Release:	%mkrel 1
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
 URL:		http://www.itk.org
 Source0:	http://dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar.gz
 Source1:	http://dl.sourceforge.net/sourceforge/itk/ItkSoftwareGuide-2.4.0.pdf.bz2
-Source2:	itk-3.16-doc.tar.lzma
+Source2:	http://dl.sourceforge.net/sourceforge/itk/DoxygenInsightToolkit-%{version}.tar.gz
 BuildRequires:	cmake >= 2.6.0
 BuildRequires:	X11-devel
 BuildRequires:	png-devel
@@ -73,10 +73,8 @@ BuildRequires:	tcl-devel >= 8.6
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Epoch:		2
 
-Patch0:		InsightToolkit-3.16.0-build-install.patch
-Patch1:		itk-3.12.0-tcl8.6.patch
-Patch2:		itk-3.12.0-tk8.6.patch
-Patch3:		itk-3.14.0-slatec-versioned.patch
+Patch0:		InsightToolkit-3.20.0-build-install.patch
+Patch1:		InsightToolkit-3.20.0-tcl8.6.patch
 
 %description
 ITK is an open-source software system to support the Visible Human Project. 
@@ -342,10 +340,8 @@ Tcl development files for ITK bindings.
 %prep
 %setup -q -n InsightToolkit-%{version}
 
-%patch0 -p0 -b .build_install
+%patch0 -p1
 %patch1 -p1
-%patch2 -p1
-#patch3 -p0
 
 # doc
 bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
@@ -444,6 +440,8 @@ install -d -m 755 %{buildroot}/%{_docdir}/%{name}
 	%{buildroot}/%{_docdir}/%{name}
 %else
     tar Jxf %{SOURCE2} -C %{buildroot}%{_docdir}
+    mv %{buildroot}%{_docdir}/{DoxygenInsightToolkit-%{version}/,}html
+    rm -fr %{buildroot}%{_docdir}/{DoxygenInsightToolkit-%{version}
     cp -fa Documentation/{README.html,InsightDeveloperStart.pdf,Style.pdf} \
 	ItkSoftwareGuide.pdf Copyright %{buildroot}%{_docdir}/%{name}
 %endif
