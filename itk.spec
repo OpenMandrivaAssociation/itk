@@ -439,9 +439,9 @@ install -d -m 755 %{buildroot}/%{_docdir}/%{name}
     cp -fa README.html Documentation/DeveloperList.txt Copyright	\
 	%{buildroot}/%{_docdir}/%{name}
 %else
-    tar Jxf %{SOURCE2} -C %{buildroot}%{_docdir}
-    mv %{buildroot}%{_docdir}/{DoxygenInsightToolkit-%{version}/,}html
-    rm -fr %{buildroot}%{_docdir}/{DoxygenInsightToolkit-%{version}
+    tar zxf %{SOURCE2} -C %{buildroot}%{_docdir}/%{name}
+    mv %{buildroot}%{_docdir}/%{name}/{DoxygenInsightToolkit-%{version}/,}html
+    rm -fr %{buildroot}%{_docdir}/%{name}/DoxygenInsightToolkit-%{version}
     cp -fa Documentation/{README.html,InsightDeveloperStart.pdf,Style.pdf} \
 	ItkSoftwareGuide.pdf Copyright %{buildroot}%{_docdir}/%{name}
 %endif
