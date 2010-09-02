@@ -31,7 +31,7 @@
 
 Name:		%{name}
 Version:	%{version}
-Release:	%mkrel 1
+Release:	%mkrel 2
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
@@ -180,6 +180,7 @@ Summary:	C++, Tcl and Python example programs/scripts for ITK
 Group:		Development/C++
 Requires:	%{libname} = %{epoch}:%{version}-%{release}
 Obsoletes:	%{name}-data
+BuildArch: noarch
 
 %description examples
 ITK is an open-source software system to support the Visible Human Project. 
@@ -209,6 +210,7 @@ sponsors).
 %package	doc
 Summary:	Documentation for ITK
 Group:		Development/C++
+BuildArch: noarch
 
 %description	doc
 ITK is an open-source software system to support the Visible Human Project. 
