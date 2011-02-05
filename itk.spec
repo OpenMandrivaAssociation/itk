@@ -31,7 +31,7 @@
 
 Name:		%{name}
 Version:	%{version}
-Release:	%mkrel 2
+Release:	%mkrel 3
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
@@ -40,7 +40,11 @@ Source0:	http://dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar
 Source1:	http://dl.sourceforge.net/sourceforge/itk/ItkSoftwareGuide-2.4.0.pdf.bz2
 Source2:	http://dl.sourceforge.net/sourceforge/itk/DoxygenInsightToolkit-%{version}.tar.gz
 BuildRequires:	cmake >= 2.6.0
-BuildRequires:	X11-devel
+BuildRequires:	libx11-devel
+BuildRequires:	libxext-devel
+BuildRequires:	libxft-devel
+BuildRequires:	libxscrnsaver-devel
+BuildRequires:	libxt-devel
 BuildRequires:	png-devel
 BuildRequires:	tiff-devel
 BuildRequires:	zlib-devel
@@ -69,6 +73,7 @@ Requires:	python-numarray
 %if %{build_tcl}
 BuildRequires:	tk-devel >= 8.6
 BuildRequires:	tcl-devel >= 8.6
+BuildRequires:	tcl
 %endif
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Epoch:		2
