@@ -31,7 +31,7 @@
 
 Name:		%{name}
 Version:	%{version}
-Release:	%mkrel 3
+Release:	%mkrel 4
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
@@ -80,6 +80,8 @@ Epoch:		2
 
 Patch0:		InsightToolkit-3.20.0-build-install.patch
 Patch1:		InsightToolkit-3.20.0-tcl8.6.patch
+Patch2:		InsightToolkit-3.20.0-gcc4.6.patch
+Patch3:		InsightToolkit-3.20.0-png1.5.patch
 
 %description
 ITK is an open-source software system to support the Visible Human Project. 
@@ -349,6 +351,8 @@ Tcl development files for ITK bindings.
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 # doc
 bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
