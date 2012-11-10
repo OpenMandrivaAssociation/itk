@@ -1,0 +1,13 @@
+diff -p -up InsightToolkit-3.20.0/Wrapping/CSwig/CommonA/itkTclCommand.h.orig InsightToolkit-3.20.0/Wrapping/CSwig/CommonA/itkTclCommand.h
+--- InsightToolkit-3.20.0/Wrapping/CSwig/CommonA/itkTclCommand.h.orig	2010-07-14 20:44:25.000000000 +0000
++++ InsightToolkit-3.20.0/Wrapping/CSwig/CommonA/itkTclCommand.h	2010-07-14 20:44:42.000000000 +0000
+@@ -19,7 +19,9 @@
+ 
+ #include "itkCommand.h"
+ 
++#define USE_INTERP_ERRORLINE	1
+ #include <tcl.h>
++#undef USE_INTERP_ERRORLINE
+ 
+ namespace itk
+ {
