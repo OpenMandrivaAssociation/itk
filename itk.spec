@@ -19,8 +19,6 @@
 %define build_tcl	0
 %{?_with_python: %{expand: %%global build_tcl 1}}
 
-%define name		itk
-%define version		3.20.0
 %define libname		%mklibname %{name} 4
 %define develname	%mklibname %{name} -d
 %define short_version	%(echo %{version} | cut -d. -f1,2)
@@ -29,9 +27,10 @@
 %define itklibdir	%{_libdir}/%{name}-%{short_version}
 %define itkincludedir	%{_includedir}/%{name}-%{short_version}
 
-Name:		%{name}
-Version:	%{version}
-Release:	%mkrel 4
+Name:		itk
+Version:	3.20.0
+Release:	4
+Epoch:		2
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
@@ -40,25 +39,27 @@ Source0:	http://dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar
 Source1:	http://dl.sourceforge.net/sourceforge/itk/ItkSoftwareGuide-2.4.0.pdf.bz2
 Source2:	http://dl.sourceforge.net/sourceforge/itk/DoxygenInsightToolkit-%{version}.tar.gz
 BuildRequires:	cmake >= 2.6.0
-BuildRequires:	libx11-devel
-BuildRequires:	libxext-devel
-BuildRequires:	libxft-devel
-BuildRequires:	libxscrnsaver-devel
-BuildRequires:	libxt-devel
-BuildRequires:	png-devel
-BuildRequires:	tiff-devel
-BuildRequires:	zlib-devel
-BuildRequires:	fftw3-devel
+BuildRequires:	pkgconfig(x11)
+BuildRequires:	pkgconfig(xext)
+BuildRequires:	pkgconfig(xft)
+BuildRequires:	pkgconfig(xscrnsaver)
+BuildRequires:	pkgconfig(xt)
+BuildRequires:	pkgconfig(libpng)
+# New tiff is not supported yet
+#BuildRequires:	tiff-devel
+BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(fftw3)
 BuildRequires:	graphviz
-BuildRequires:	libuuid-devel
+BuildRequires:	pkgconfig(uuid)
+BuildRequires:	tcl-devel
+
 %if %{build_doc}
 BuildRequires:	doxygen
 # this should signficantly reduce number of pango-WARNING messages
 BuildRequires:	urw-fonts
-BuildRequires:	fontconfig
 %endif
 BuildRequires:	perl
-BuildRequires:	fontconfig
+BuildRequires:	pkgconfig(fontconfig)
 BuildRequires:	cableswig
 %if %{build_java}
 BuildRequires:	java-rpmbuild
@@ -75,13 +76,14 @@ BuildRequires:	tk-devel >= 8.6
 BuildRequires:	tcl-devel >= 8.6
 BuildRequires:	tcl
 %endif
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Epoch:		2
 
 Patch0:		InsightToolkit-3.20.0-build-install.patch
 Patch1:		InsightToolkit-3.20.0-tcl8.6.patch
 Patch2:		InsightToolkit-3.20.0-gcc4.6.patch
-Patch3:		InsightToolkit-3.20.0-png1.5.patch
+Patch3:		InsightToolkit-3.20.0-gcc4.7.patch
+Patch4:		InsightToolkit-3.20.0-libpng15.patch
+Patch5:		InsightToolkit-3.20.0-gzgetc.patch
+Patch6:		InsightToolkit-3.20.0-header.patch
 
 %description
 ITK is an open-source software system to support the Visible Human Project. 
@@ -102,7 +104,6 @@ sponsors).
 %package	-n %{libname}
 Group:		System/Libraries
 Summary:	Medicine Insight Segmentation and Registration
-Obsoletes:	%mklibname %{name} 3
 Provides:	%{name} = %{version}-%{release}
 Provides:	itk = %{version}-%{release}
 
@@ -185,9 +186,8 @@ sponsors).
 %package	examples
 Summary:	C++, Tcl and Python example programs/scripts for ITK
 Group:		Development/C++
-Requires:	%{libname} = %{epoch}:%{version}-%{release}
-Obsoletes:	%{name}-data
-BuildArch: noarch
+Requires:	%{libname} = %{EVRD}
+BuildArch:	noarch
 
 %description examples
 ITK is an open-source software system to support the Visible Human Project. 
@@ -217,7 +217,7 @@ sponsors).
 %package	doc
 Summary:	Documentation for ITK
 Group:		Development/C++
-BuildArch: noarch
+BuildArch:	noarch
 
 %description	doc
 ITK is an open-source software system to support the Visible Human Project. 
@@ -353,6 +353,9 @@ Tcl development files for ITK bindings.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 # doc
 bunzip2 %{SOURCE1} -c > ItkSoftwareGuide.pdf
@@ -417,7 +420,7 @@ find -name CVS -type d | xargs rm -rf
 %else
 	-DITK_USE_PATENTED=OFF \
 %endif
-	-DITK_USE_SYSTEM_TIFF=ON \
+	-DITK_USE_SYSTEM_TIFF=OFF \
 	-DITK_USE_SYSTEM_PNG=ON \
 	-DITK_USE_SYSTEM_ZLIB=ON
 
@@ -501,7 +504,214 @@ ln -sf %{itkincludedir} %{buildroot}%{_includedir}/InsightToolkit
 cd build
 # set the lib path needed to run the tests
 export LD_LIBRARY_PATH=`pwd`/bin
-# ctest 
+# ctest
 
-%clean
-rm -rf %{buildroot}
+%changelog
+* Mon Jul 09 2012 Anton Chernyshov <ach@rosalab.ru> 3.20.0-1
+- Fix BuildRequires
+- Add patch to build with gcc-4.6
+
+* Sat Feb 05 2011 Funda Wang <fwang@mandriva.org> 2:3.20.0-3mdv2011.0
++ Revision: 636015
+- tighten BR
+
+* Thu Sep 02 2010 Thierry Vignaud <tv@mandriva.org> 2:3.20.0-2mdv2011.0
++ Revision: 575206
+- let the doc subpackage be noarch
+
+* Wed Jul 14 2010 Paulo Andrade <pcpa@mandriva.com.br> 2:3.20.0-1mdv2011.0
++ Revision: 553420
+- Update to version 3.20.0.
+
+* Thu May 27 2010 Paulo Andrade <pcpa@mandriva.com.br> 2:3.16.0-4mdv2010.1
++ Revision: 546357
+- Correct 2010.0 upgrade conflict
+- Generate itk-doc from prebuilt files if documentation build is disabled
+
+* Thu May 13 2010 Paulo Andrade <pcpa@mandriva.com.br> 2:3.16.0-3mdv2010.1
++ Revision: 544710
+- Make itk-examples package instalable
+
+* Tue May 11 2010 Frederic Crozat <fcrozat@mandriva.com> 2:3.16.0-2mdv2010.1
++ Revision: 544488
+- force rebuild
+- force rebuild
+
+  + Paulo Andrade <pcpa@mandriva.com.br>
+    - Disable documentation build
+    - Add epoch to requires of devel
+    - Add libuuid-devel to build requires
+    - Create a symbolic link to tcldir, so that itkwish works "out of the box",
+      without requiring extra setup to specify where InsightToolkit tcl interface
+      is located.
+    - Correct leftover of manual builds before setting ITK_INSTALL_LIB_DIR.
+      Correct generation of symbolic link to %%{python_sitelib}.
+    - o Update to latest upstream release itk 3.12.0.
+      o Enable Python and Tcl wrapping by default.
+      o Use same pattern as vtk package for libdir and includedir,
+      that is to use the "reduced" name itk-major.minor instead of InsightToolkit
+      o Add extra -devel packages for .so files.
+
+  + Funda Wang <fwang@mandriva.org>
+    - New version 3.16.0
+
+  + Gaëtan Lehmann <glehmann@mandriva.org>
+    - Some tests are broken - don't run the tests for now
+    - 3.14
+    - disable python and tcl - they'll be built in wrapitk package
+    - build review and consolidated morphology - they are required to build wrapitk
+    - patch for unversioned slatec lib (from upstream)
+
+  + Helio Chissini de Castro <helio@mandriva.com>
+    - Updates for current version
+    - Added flags for build doc, and python and java bindings and examples.
+      Doc are disabled due the huge amount of time to compile. Will be replaced with upstream ready doc.
+      Java and python bindings are disabled due a gcc 4.x compilation issues ( TODO )
+    - Removed data package, since is used only to examples package
+    - Added %%_lib in ld.so.conf.d conf to allow biarch installs
+    - Fixed library soname
+    - Added patch to install 64 libs in proper place
+
+  + Emmanuel Andry <eandry@mandriva.org>
+    - New version
+    - use major
+
+  + Pixel <pixel@mandriva.com>
+    - do not call ldconfig in %%post/%%postun, it is now handled by filetriggers
+
+  + Adam Williamson <awilliamson@mandriva.org>
+    - rebuild for new era
+    - spec clean
+    - update file lists
+    - drop headertest.patch (merged upstream)
+    - drop the various external sources that were rolled into upstream
+    - new license policy
+    - drop unneeded vars
+    - new release 3.4.0
+
+  + Olivier Blin <oblin@mandriva.com>
+    - restore BuildRoot
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - kill re-definition of %%buildroot on Pixel's request
+    - buildrequires X11-devel instead of XFree86-devel
+
+
+* Thu Aug 31 2006 Gaëtan Lehmann (INRA) <glehmann@mandriva.org> 
++ 2006-08-31 17:38:23 (59090)
+use RPM_OPT_FLAGS
+
+* Tue Aug 29 2006 Gaëtan Lehmann (INRA) <glehmann@mandriva.org> 
++ 2006-08-29 11:54:15 (58628)
+rebuild (again) to sync i586 and x86_64 packages
+
+* Mon Jul 31 2006 Gaëtan Lehmann (INRA) <glehmann@mandriva.org> 
++ 2006-07-31 21:36:23 (42881)
+rebuild
+
+* Sun Jul 30 2006 Gaëtan Lehmann (INRA) <glehmann@mandriva.org> 
++ 2006-07-30 09:54:36 (42650)
+Import itk
+
+* Tue Jul 18 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.8.1-1mdv2007.0
+- 2.8.1
+- drop patch 1 (merged upstream)
+- update patch 11
+- replace patches 8, 9 and 10 by patch 10
+- no more requires cableswig (wrapping is done in wrapitk)
+- update source 4 (enhanced erode and dilate filters)
+
+* Wed Apr 12 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.6.0-6-mdk
+- fix post install problem
+
+* Mon Apr 10 2006 Gaetan Lehmann <glehmann@n4.mandriva.com> 2.6.0-5mdk
+- update source 4 (enhanced erode and dilate filters)
+- run tests
+
+* Fri Apr 07 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.6.0-4mdk
+- Patch1: fix itk::VectorImage invalid oveloaded methods
+- drop tcl support (will be supproted by wrapitk)
+- add ImageCompare in devel package
+
+* Mon Mar 27 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.6.0-3mdk
+- update reconstruction filters
+- fix itkwish attr
+
+* Tue Mar 21 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.6.0-2mdk
+- fix missing itkwish
+
+* Tue Mar 14 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.6.0-1mdk
+- 2.6.0
+- remove patches 1 to 7: merged or fixed upstream
+- update histogram based dilation/erosion filters
+- patch 30: fix test build with new reconstruction filters
+
+* Tue Mar 07 2006 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.4.1-5mdk
+- add several patch to enhance perf and fix bugs
+- drop python support (will by provided by wrapitk)
+- add optional patches from wrapitk
+- force /usr/bin/c++ compiler
+
+* Fri Jan 20 2006 Oden Eriksson <oeriksson@mandriva.com> 2.4.1-4mdk
+- fix deps
+
+* Sat Jan 07 2006 Oden Eriksson <oeriksson@mandriva.com> 2.4.1-3mdk
+- rebuilt against soname aware deps (tcl/tk)
+- fix deps
+
+* Sun Dec 11 2005 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.4.1-2mdk
+- multiarch support
+
+* Fri Dec 09 2005 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.4.1-1mdk
+- new release 2.4.1
+- use Release build
+- fix lib path in cmake files on x86_64
+- pre-requires lib package for wrappers. ldconfig need to know where are
+  the files
+
+* Sat Dec 03 2005 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.4.0-1mdk
+- new release 2.4.0
+
+* Thu Mar 24 2005 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.0.1-1mdk
+- New release 2.0.1
+- Use mkrel
+- add "--with patented" switch
+- fix wrong tcl group
+
+* Wed Mar 02 2005 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.0.0-2mdk
+- add morpho filters in wrappers (patch1)
+- fix some lint
+
+* Sun Feb 13 2005 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 2.0.0-1mdk
+- 2.0.0
+- add wrappers
+
+* Mon Jan 31 2005 Gaetan Lehmann <gaetan.lehmann@jouy.inra.fr> 1.10.0-0.cvs20050131.1mdk
+- 1.10.0 cvs
+- build still fail with wrapper so no wrapper avaible :-(
+- add doc and devel packages
+- use libitk name
+- initial contrib release
+
+* Mon Sep 27 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.8.1-2
+- add an example packages.
+
+* Wed Sep 22 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.8.1-1
+- update to version 1.8.1.
+
+* Thu Sep 09 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.8.0-2
+- fix CC and CXX to be consistent with the VTK package.
+
+* Wed Sep 08 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.8.0-1
+- update to version 1.8.0.
+
+* Thu May 27 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.6.0-3
+- rebuild for Fedora Core 2
+- debuginfo rebuild
+
+* Mon Feb 23 2004 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr> 1.6.0-2
+- update to version 1.6.0.
+
+* Wed Oct 29 2003 Fabrice Bellet <Fabrice.Bellet@creatis.insa-lyon.fr>
+- initial release 1.4.0.
+

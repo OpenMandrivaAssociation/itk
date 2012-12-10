@@ -1,0 +1,311 @@
+diff -urN InsightToolkit-3.20.0/Code/Algorithms/itkCurvesLevelSetFunction.h InsightToolkit-3.20.0-patched/Code/Algorithms/itkCurvesLevelSetFunction.h
+--- InsightToolkit-3.20.0/Code/Algorithms/itkCurvesLevelSetFunction.h	2008-10-24 03:15:23.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Code/Algorithms/itkCurvesLevelSetFunction.h	2012-09-30 22:29:51.957005513 +1100
+@@ -99,7 +99,7 @@
+   /** The curvature speed is same as the propagation speed. */
+   virtual ScalarValueType CurvatureSpeed(const NeighborhoodType & neighborhood,
+                                          const FloatOffsetType & offset, GlobalDataStruct *gd ) const
+-  { return PropagationSpeed( neighborhood, offset, gd ); }
++  { return this->PropagationSpeed( neighborhood, offset, gd ); }
+ 
+   /** Set/Get the sigma for the Gaussian kernel used to compute the gradient
+    * of the feature image needed for the advection term of the equation. */
+diff -urN InsightToolkit-3.20.0/Code/Algorithms/itkGeodesicActiveContourLevelSetFunction.h InsightToolkit-3.20.0-patched/Code/Algorithms/itkGeodesicActiveContourLevelSetFunction.h
+--- InsightToolkit-3.20.0/Code/Algorithms/itkGeodesicActiveContourLevelSetFunction.h	2008-12-22 05:13:11.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Algorithms/itkGeodesicActiveContourLevelSetFunction.h	2012-09-30 22:20:08.418011693 +1100
+@@ -114,7 +114,7 @@
+   virtual ScalarValueType CurvatureSpeed(const NeighborhoodType & neighborhood,
+                                          const FloatOffsetType & offset, GlobalDataStruct *gd ) const
+     { 
+-    return PropagationSpeed( neighborhood, offset, gd );
++    return this->PropagationSpeed( neighborhood, offset, gd );
+     }
+ 
+   /** Set/Get the sigma for the Gaussian kernel used to compute the gradient
+diff -urN InsightToolkit-3.20.0/Code/Algorithms/itkGeodesicActiveContourShapePriorLevelSetFunction.h InsightToolkit-3.20.0-patched/Code/Algorithms/itkGeodesicActiveContourShapePriorLevelSetFunction.h
+--- InsightToolkit-3.20.0/Code/Algorithms/itkGeodesicActiveContourShapePriorLevelSetFunction.h	2008-12-22 05:13:12.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Algorithms/itkGeodesicActiveContourShapePriorLevelSetFunction.h	2012-09-30 22:58:56.623987037 +1100
+@@ -130,7 +130,7 @@
+   /** The curvature speed is same as the propagation speed. */
+   virtual ScalarValueType CurvatureSpeed(const NeighborhoodType & neighborhood,
+                                          const FloatOffsetType & offset, GlobalDataStruct *gd ) const
+-    { return PropagationSpeed( neighborhood, offset, gd ); }
++    { return this->PropagationSpeed( neighborhood, offset, gd ); }
+ 
+   /** Set/Get the sigma for the Gaussian kernel used to compute the gradient
+    * of the feature image needed for the advection term of the equation. */
+diff -urN InsightToolkit-3.20.0/Code/Algorithms/itkShapeDetectionLevelSetFunction.h InsightToolkit-3.20.0-patched/Code/Algorithms/itkShapeDetectionLevelSetFunction.h
+--- InsightToolkit-3.20.0/Code/Algorithms/itkShapeDetectionLevelSetFunction.h	2009-01-28 05:30:15.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Algorithms/itkShapeDetectionLevelSetFunction.h	2012-09-30 22:13:24.025015975 +1100
+@@ -103,7 +103,7 @@
+   /** The curvature speed is same as the propagation speed. */
+   virtual ScalarValueType CurvatureSpeed(const NeighborhoodType & neighborhood,
+                                          const FloatOffsetType & offset, GlobalDataStruct *gd ) const
+-  { return PropagationSpeed( neighborhood, offset, gd ); }
++  { return this->PropagationSpeed( neighborhood, offset, gd ); }
+ 
+   virtual void Initialize(const RadiusType &r)
+     {
+diff -urN InsightToolkit-3.20.0/Code/Algorithms/itkVoronoiPartitioningImageFilter.txx InsightToolkit-3.20.0-patched/Code/Algorithms/itkVoronoiPartitioningImageFilter.txx
+--- InsightToolkit-3.20.0/Code/Algorithms/itkVoronoiPartitioningImageFilter.txx	2009-01-28 05:30:17.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Algorithms/itkVoronoiPartitioningImageFilter.txx	2012-09-30 22:11:48.406016987 +1100
+@@ -129,7 +129,7 @@
+       {
+       if ((*nit)>i) 
+         {
+-        drawLine(this->m_WorkingVD->GetSeed(i),this->m_WorkingVD->GetSeed(*nit));
++        this->drawLine(this->m_WorkingVD->GetSeed(i),this->m_WorkingVD->GetSeed(*nit));
+         i=i;
+         }
+       }
+@@ -164,7 +164,7 @@
+       VertList.push_back(currP);
+       }
+     // Need to fill with an segment identifier
+-    FillPolygon(VertList, static_cast<OutputPixelType>(i));
++    this->FillPolygon(VertList, static_cast<OutputPixelType>(i));
+     }
+ }
+ 
+diff -urN InsightToolkit-3.20.0/Code/BasicFilters/itkBloxBoundaryPointImageToBloxBoundaryProfileImageFilter.txx InsightToolkit-3.20.0-patched/Code/BasicFilters/itkBloxBoundaryPointImageToBloxBoundaryProfileImageFilter.txx
+--- InsightToolkit-3.20.0/Code/BasicFilters/itkBloxBoundaryPointImageToBloxBoundaryProfileImageFilter.txx	2009-05-08 01:03:37.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Code/BasicFilters/itkBloxBoundaryPointImageToBloxBoundaryProfileImageFilter.txx	2012-09-30 14:37:14.797155050 +1100
+@@ -502,7 +502,7 @@
+ ::SetInput1(const SourceImageType * image1 )
+ {
+   // Process object is not const-correct so the const casting is required.
+-  SetNthInput(1,  const_cast<SourceImageType *>( image1 ) );
++  this->SetNthInput(1,  const_cast<SourceImageType *>( image1 ) );
+ }
+ 
+ template< typename TSourceImage >
+@@ -511,7 +511,7 @@
+ ::SetInput2(const BoundaryPointImageType * image2 )
+ {
+   // Process object is not const-correct so the const casting is required.
+-  SetNthInput(0, const_cast<BoundaryPointImageType *>( image2 ) );
++  this->SetNthInput(0, const_cast<BoundaryPointImageType *>( image2 ) );
+ }
+ 
+ } // end namespace
+diff -urN InsightToolkit-3.20.0/Code/BasicFilters/itkBloxBoundaryProfileImageToBloxCoreAtomImageFilter.txx InsightToolkit-3.20.0-patched/Code/BasicFilters/itkBloxBoundaryProfileImageToBloxCoreAtomImageFilter.txx
+--- InsightToolkit-3.20.0/Code/BasicFilters/itkBloxBoundaryProfileImageToBloxCoreAtomImageFilter.txx	2006-03-19 14:36:56.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/BasicFilters/itkBloxBoundaryProfileImageToBloxCoreAtomImageFilter.txx	2012-09-30 14:45:44.516149653 +1100
+@@ -46,7 +46,7 @@
+ ::SetInput1(const SourceImageType * image1 ) 
+ {
+   // Process object is not const-correct so the const casting is required.
+-  SetNthInput(1,  const_cast<SourceImageType *>( image1 ) );
++  this->SetNthInput(1,  const_cast<SourceImageType *>( image1 ) );
+ }
+ 
+ template< typename TInputImage, typename TOutputImage, typename TSourceImage >
+@@ -55,7 +55,7 @@
+ ::SetInput2(const InputImageType * image2 ) 
+ {
+   // Process object is not const-correct so the const casting is required.
+-  SetNthInput(0, const_cast<InputImageType *>( image2 ) );
++  this->SetNthInput(0, const_cast<InputImageType *>( image2 ) );
+ }
+ 
+ 
+diff -urN InsightToolkit-3.20.0/Code/BasicFilters/itkTernaryFunctorImageFilter.txx InsightToolkit-3.20.0-patched/Code/BasicFilters/itkTernaryFunctorImageFilter.txx
+--- InsightToolkit-3.20.0/Code/BasicFilters/itkTernaryFunctorImageFilter.txx	2008-10-19 03:11:14.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Code/BasicFilters/itkTernaryFunctorImageFilter.txx	2012-09-30 14:52:45.921145189 +1100
+@@ -46,7 +46,7 @@
+ ::SetInput1( const TInputImage1 *image1 ) 
+ {
+   // The ProcessObject is not const-correct so the const_cast is required here
+-  SetNthInput( 0, const_cast<TInputImage1 *>( image1 ) );
++  this->SetNthInput( 0, const_cast<TInputImage1 *>( image1 ) );
+ }
+ 
+ /**
+@@ -59,7 +59,7 @@
+ ::SetInput2( const TInputImage2 *image2 ) 
+ {
+   // The ProcessObject is not const-correct so the const_cast is required here
+-  SetNthInput( 1, const_cast<TInputImage2 *>( image2 ) );
++  this->SetNthInput( 1, const_cast<TInputImage2 *>( image2 ) );
+ }
+ 
+ /**
+@@ -72,7 +72,7 @@
+ ::SetInput3( const TInputImage3 *image3 ) 
+ {
+   // The ProcessObject is not const-correct so the const_cast is required here
+-  SetNthInput( 2, const_cast<TInputImage3 *>( image3 ) );
++  this->SetNthInput( 2, const_cast<TInputImage3 *>( image3 ) );
+ }
+ 
+ /**
+diff -urN InsightToolkit-3.20.0/Code/Common/itkIndex.h InsightToolkit-3.20.0-patched/Code/Common/itkIndex.h
+--- InsightToolkit-3.20.0/Code/Common/itkIndex.h	2009-10-28 02:06:22.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Common/itkIndex.h	2012-09-30 13:42:12.753190018 +1100
+@@ -23,6 +23,7 @@
+ #include "itkFixedArray.h"
+ #include "itkMath.h"
+ 
++#include <cstring>
+ #include <memory>
+ 
+ #include "itkExceptionObject.h"
+diff -urN InsightToolkit-3.20.0/Code/Common/itkParametricPath.txx InsightToolkit-3.20.0-patched/Code/Common/itkParametricPath.txx
+--- InsightToolkit-3.20.0/Code/Common/itkParametricPath.txx	2009-02-20 05:41:22.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Common/itkParametricPath.txx	2012-09-30 00:44:51.466406893 +1100
+@@ -43,7 +43,7 @@
+   ContinuousIndexType continuousIndex;
+   IndexType           index;
+   
+-  continuousIndex = Evaluate( input );
++  continuousIndex = this->Evaluate( input );
+   
+   // Round each coordinate to the nearest integer value
+   for( unsigned int i=0; i<VDimension; i++ )
+@@ -134,7 +134,7 @@
+     inputStepSize = this->EndOfInput() - input;
+     }
+   
+-  return ( Evaluate(input + inputStepSize) - Evaluate(input) ) / inputStepSize;
++  return ( this->Evaluate(input + inputStepSize) - this->Evaluate(input) ) / inputStepSize;
+ }
+ 
+ template<unsigned int VDimension>
+diff -urN InsightToolkit-3.20.0/Code/Common/itkPoint.txx InsightToolkit-3.20.0-patched/Code/Common/itkPoint.txx
+--- InsightToolkit-3.20.0/Code/Common/itkPoint.txx	2007-01-23 23:15:24.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Common/itkPoint.txx	2012-09-30 14:10:42.430171912 +1100
+@@ -256,7 +256,7 @@
+ ::SetToBarycentricCombination( const Self * P,
+                                const double * weights, unsigned int N )
+ {
+-  Fill( NumericTraits<T>::Zero ); // put this point to null
++  this->Fill( NumericTraits<T>::Zero ); // put this point to null
+   double weightSum = 0.0;
+   for( unsigned int j=0; j<N-1; j++) 
+     {
+diff -urN InsightToolkit-3.20.0/Code/Common/itkSize.h InsightToolkit-3.20.0-patched/Code/Common/itkSize.h
+--- InsightToolkit-3.20.0/Code/Common/itkSize.h	2009-03-04 01:09:26.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Common/itkSize.h	2012-09-30 13:50:53.939184498 +1100
+@@ -17,6 +17,7 @@
+ #ifndef __itkSize_h
+ #define __itkSize_h
+ 
++#include <cstring>
+ #include "itkMacro.h"
+ 
+ namespace itk
+diff -urN InsightToolkit-3.20.0/Code/Numerics/Statistics/itkWeightedCentroidKdTreeGenerator.txx InsightToolkit-3.20.0-patched/Code/Numerics/Statistics/itkWeightedCentroidKdTreeGenerator.txx
+--- InsightToolkit-3.20.0/Code/Numerics/Statistics/itkWeightedCentroidKdTreeGenerator.txx	2009-03-05 05:29:54.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Numerics/Statistics/itkWeightedCentroidKdTreeGenerator.txx	2012-09-30 01:06:25.832393187 +1100
+@@ -117,13 +117,13 @@
+   upperBound[partitionDimension] = partitionValue;
+   const unsigned int beginLeftIndex = beginIndex;
+   const unsigned int endLeftIndex   = medianIndex;
+-  KdTreeNodeType* left = GenerateTreeLoop(beginLeftIndex, endLeftIndex, lowerBound, upperBound, level + 1);
++  KdTreeNodeType* left = this->GenerateTreeLoop(beginLeftIndex, endLeftIndex, lowerBound, upperBound, level + 1);
+   upperBound[partitionDimension] = dimensionUpperBound;
+ 
+   lowerBound[partitionDimension] = partitionValue;
+   const unsigned int beginRightIndex = medianIndex+1;
+   const unsigned int endRighIndex    = endIndex;
+-  KdTreeNodeType* right = GenerateTreeLoop(beginRightIndex, endRighIndex, lowerBound, upperBound, level + 1);
++  KdTreeNodeType* right = this->GenerateTreeLoop(beginRightIndex, endRighIndex, lowerBound, upperBound, level + 1);
+   lowerBound[partitionDimension] = dimensionLowerBound;
+ 
+ 
+diff -urN InsightToolkit-3.20.0/Code/Review/itkMovingHistogramImageFilter.txx InsightToolkit-3.20.0-patched/Code/Review/itkMovingHistogramImageFilter.txx
+--- InsightToolkit-3.20.0/Code/Review/itkMovingHistogramImageFilter.txx	2009-06-03 23:48:05.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Code/Review/itkMovingHistogramImageFilter.txx	2012-09-30 21:34:16.885040829 +1100
+@@ -291,7 +291,7 @@
+     // which direction
+     int LineDirection=0;
+     // This function deals with changing planes etc
+-    GetDirAndOffset(LineStart, PrevLineStart,
++    this->GetDirAndOffset(LineStart, PrevLineStart,
+         LineOffset, Changes, LineDirection);
+     ++(Steps[LineDirection]);
+     IndexType PrevLineStartHist = LineStart - LineOffset;
+diff -urN InsightToolkit-3.20.0/Code/Review/itkQuadEdgeMeshDiscreteGaussianCurvatureEstimator.h InsightToolkit-3.20.0-patched/Code/Review/itkQuadEdgeMeshDiscreteGaussianCurvatureEstimator.h
+--- InsightToolkit-3.20.0/Code/Review/itkQuadEdgeMeshDiscreteGaussianCurvatureEstimator.h	2008-10-02 08:40:25.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Code/Review/itkQuadEdgeMeshDiscreteGaussianCurvatureEstimator.h	2012-10-01 00:25:03.881932318 +1100
+@@ -98,7 +98,7 @@
+         // Compute Angle;
+         sum_theta += static_cast< OutputCurvatureType >(
+               TriangleType::ComputeAngle( q0, iP, q1 ) );
+-        area += ComputeMixedArea( qe_it, qe_it2 );
++        area += this->ComputeMixedArea( qe_it, qe_it2 );
+         qe_it = qe_it2;
+         } while( qe_it != qe );
+ 
+diff -urN InsightToolkit-3.20.0/Code/Review/itkQuadEdgeMeshDiscreteMeanCurvatureEstimator.h InsightToolkit-3.20.0-patched/Code/Review/itkQuadEdgeMeshDiscreteMeanCurvatureEstimator.h
+--- InsightToolkit-3.20.0/Code/Review/itkQuadEdgeMeshDiscreteMeanCurvatureEstimator.h	2010-01-15 04:19:08.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Review/itkQuadEdgeMeshDiscreteMeanCurvatureEstimator.h	2012-10-01 00:28:26.216930175 +1100
+@@ -110,7 +110,7 @@
+           temp_coeff = coefficent( output, qe_it );
+           Laplace += temp_coeff * ( iP - q0 );
+ 
+-          temp_area = ComputeMixedArea( qe_it, qe_it2 );
++          temp_area = this->ComputeMixedArea( qe_it, qe_it2 );
+           area += temp_area;
+ 
+           face_normal = TriangleType::ComputeNormal( q0, iP, q1 );
+diff -urN InsightToolkit-3.20.0/Code/Review/itkQuadEdgeMeshDiscretePrincipalCurvaturesEstimator.h InsightToolkit-3.20.0-patched/Code/Review/itkQuadEdgeMeshDiscretePrincipalCurvaturesEstimator.h
+--- InsightToolkit-3.20.0/Code/Review/itkQuadEdgeMeshDiscretePrincipalCurvaturesEstimator.h	2010-01-15 05:03:21.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Review/itkQuadEdgeMeshDiscretePrincipalCurvaturesEstimator.h	2012-10-01 00:26:38.575931314 +1100
+@@ -116,7 +116,7 @@
+           sum_theta += static_cast< OutputCurvatureType >(
+             TriangleType::ComputeAngle( q0, iP, q1 ) );
+ 
+-          temp_area = ComputeMixedArea( qe_it, qe_it2 );
++          temp_area = this->ComputeMixedArea( qe_it, qe_it2 );
+           area += temp_area;
+ 
+           face_normal = TriangleType::ComputeNormal( q0, iP, q1 );
+diff -urN InsightToolkit-3.20.0/Code/Review/itkValuedRegionalMaximaImageFilter.h InsightToolkit-3.20.0-patched/Code/Review/itkValuedRegionalMaximaImageFilter.h
+--- InsightToolkit-3.20.0/Code/Review/itkValuedRegionalMaximaImageFilter.h	2008-02-08 01:58:06.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Code/Review/itkValuedRegionalMaximaImageFilter.h	2012-09-30 23:53:54.780952110 +1100
+@@ -87,7 +87,7 @@
+ protected:
+   ValuedRegionalMaximaImageFilter() 
+     {
+-    SetMarkerValue( 
++    this->SetMarkerValue( 
+       NumericTraits<ITK_TYPENAME TOutputImage::PixelType>::NonpositiveMin());
+     }
+   virtual ~ValuedRegionalMaximaImageFilter() {}
+diff -urN InsightToolkit-3.20.0/Code/Review/itkValuedRegionalMinimaImageFilter.h InsightToolkit-3.20.0-patched/Code/Review/itkValuedRegionalMinimaImageFilter.h
+--- InsightToolkit-3.20.0/Code/Review/itkValuedRegionalMinimaImageFilter.h	2007-09-27 22:36:42.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Code/Review/itkValuedRegionalMinimaImageFilter.h	2012-09-30 23:51:04.288953917 +1100
+@@ -83,7 +83,7 @@
+ protected:
+   ValuedRegionalMinimaImageFilter() 
+     {
+-    SetMarkerValue(NumericTraits<ITK_TYPENAME TOutputImage::PixelType>::max());
++    this->SetMarkerValue(NumericTraits<ITK_TYPENAME TOutputImage::PixelType>::max());
+     }
+   virtual ~ValuedRegionalMinimaImageFilter() {}
+ 
+diff -urN InsightToolkit-3.20.0/Testing/Code/Common/itkMeshSourceGraftOutputTest.cxx InsightToolkit-3.20.0-patched/Testing/Code/Common/itkMeshSourceGraftOutputTest.cxx
+--- InsightToolkit-3.20.0/Testing/Code/Common/itkMeshSourceGraftOutputTest.cxx	2009-09-17 22:14:57.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Testing/Code/Common/itkMeshSourceGraftOutputTest.cxx	2012-09-30 14:04:57.109175570 +1100
+@@ -150,7 +150,7 @@
+   std::cout << "Filter: " << filter;
+ 
+   // Get the Smart Pointer to the Filter Output 
+-  GraftOutput( filter->GetOutput() );
++  this->GraftOutput( filter->GetOutput() );
+ /*
+   outputMesh->SetBufferedRegion( outputMesh->GetRequestedRegion() );
+ 
+diff -urN InsightToolkit-3.20.0/Utilities/vxl/core/vnl/vnl_matrix_fixed_ref.h InsightToolkit-3.20.0-patched/Utilities/vxl/core/vnl/vnl_matrix_fixed_ref.h
+--- InsightToolkit-3.20.0/Utilities/vxl/core/vnl/vnl_matrix_fixed_ref.h	2009-11-22 10:16:21.000000000 +1000
++++ InsightToolkit-3.20.0-patched/Utilities/vxl/core/vnl/vnl_matrix_fixed_ref.h	2012-09-30 00:21:21.125421829 +1100
+@@ -657,7 +657,7 @@
+   //: Return true if *this == rhs
+   bool operator_eq (vnl_matrix_fixed_ref_const<T,num_rows,num_cols> const & rhs) const
+   {
+-    return equal( this->data_block(), rhs.data_block() );
++    return this->equal( this->data_block(), rhs.data_block() );
+   }
+ 
+   //: Equality operator

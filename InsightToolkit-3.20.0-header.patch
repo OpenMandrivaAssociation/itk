@@ -1,0 +1,11 @@
+diff -urN InsightToolkit-3.20.0/Code/Review/itkMRCImageIO.h InsightToolkit-3.20.0-patched/Code/Review/itkMRCImageIO.h
+--- InsightToolkit-3.20.0/Code/Review/itkMRCImageIO.h	2010-06-24 03:11:17.000000000 +1100
++++ InsightToolkit-3.20.0-patched/Code/Review/itkMRCImageIO.h	2012-09-30 13:35:13.336194459 +1100
+@@ -20,6 +20,7 @@
+ 
+ #include "itkStreamingImageIOBase.h"
+ #include "itkMRCHeaderObject.h"
++#include "itkGenericUtilities.h"
+ #include <numeric>
+ 
+ namespace itk

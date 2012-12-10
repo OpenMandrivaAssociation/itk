@@ -1,0 +1,11 @@
+--- a/Code/Review/itkVoxBoCUBImageIO.cxx~	2011-10-25 11:37:23.000000000 -0500
++++ b/Code/Review/itkVoxBoCUBImageIO.cxx	2012-03-14 21:20:14.816394111 -0500
+@@ -118,7 +118,7 @@
+ 
+   unsigned char ReadByte()
+     {
+-    int byte = ::gzgetc(m_GzFile);
++    int byte = gzgetc(m_GzFile);
+     if(byte < 0)
+       {
+       itksys_ios::ostringstream oss;

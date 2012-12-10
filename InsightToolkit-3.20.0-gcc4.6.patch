@@ -1,21 +1,6 @@
---- InsightToolkit-3.20.0/Code/IO/itkImageIORegion.h.orig	2011-11-16 19:45:57.570915984 -0200
-+++ InsightToolkit-3.20.0/Code/IO/itkImageIORegion.h	2011-11-16 19:46:22.852061032 -0200
-@@ -58,9 +58,9 @@ public:
-   typedef Region        Superclass;
- 
-   /** these types correspond to those of itk::Size, itk::Offset and itk::Index */
--  typedef size_t                  SizeValueType;
--  typedef ptrdiff_t               IndexValueType;
--  typedef ptrdiff_t               OffsetValueType;
-+  typedef std::size_t             SizeValueType;
-+  typedef std::ptrdiff_t          IndexValueType;
-+  typedef std::ptrdiff_t          OffsetValueType;
- 
- 
-   /** Index typedef support. An index is used to access pixel values. */
---- InsightToolkit-3.20.0/Utilities/MetaIO/metaUtils.cxx.orig	2011-11-16 19:35:29.179454030 -0200
-+++ InsightToolkit-3.20.0/Utilities/MetaIO/metaUtils.cxx	2011-11-16 19:36:22.519745287 -0200
-@@ -797,16 +797,16 @@ bool MET_PerformUncompression(const unsi
+--- InsightToolkit-3.20.0/Utilities/MetaIO/metaUtils.cxx.orig	2012-07-08 22:18:56.849178039 +0400
++++ InsightToolkit-3.20.0/Utilities/MetaIO/metaUtils.cxx	2012-07-08 22:22:12.243169830 +0400
+@@ -797,16 +797,16 @@
  //
  bool MET_StringToWordArray(const char *s, int *n, char ***val)
  {
@@ -35,7 +20,7 @@
    bool space = false;
    while(pp<l)
      {
-@@ -837,7 +837,7 @@ bool MET_StringToWordArray(const char *s
+@@ -837,7 +837,7 @@
  
    *val = new char *[*n];
  
@@ -44,238 +29,66 @@
    for(i=0; i<*n; i++)
      {
      if(p == l)
---- InsightToolkit-3.20.0/Code/IO/itkConvertPixelBuffer.txx.orig	2011-11-16 20:00:14.161801456 -0200
-+++ InsightToolkit-3.20.0/Code/IO/itkConvertPixelBuffer.txx	2011-11-16 20:01:08.737110825 -0200
-@@ -30,7 +30,7 @@ void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::Convert(InputPixelType* inputData, 
-           int inputNumberOfComponents, 
--          OutputPixelType* outputData , size_t size)
-+          OutputPixelType* outputData , std::size_t size)
- {
-   switch(OutputConvertTraits::GetNumberOfComponents())
-     {
-@@ -150,7 +150,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertGrayToGray(InputPixelType* inputData, 
--                    OutputPixelType* outputData , size_t size)
-+                    OutputPixelType* outputData , std::size_t size)
- {
-   InputPixelType* endInput = inputData + size;
-   while(inputData != endInput)
-@@ -170,7 +170,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertRGBToGray(InputPixelType* inputData, 
--                   OutputPixelType* outputData , size_t size)
-+                   OutputPixelType* outputData , std::size_t size)
- {   
-   // Weights convert from linear RGB to CIE luminance assuming a
-   // modern monitor.  See Charles Pontyon's Colour FAQ
-@@ -198,7 +198,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertRGBAToGray(InputPixelType* inputData, 
--                    OutputPixelType* outputData , size_t size)
-+                    OutputPixelType* outputData , std::size_t size)
- {   
-   // Weights convert from linear RGB to CIE luminance assuming a
-   // modern monitor.  See Charles Pontyon's Colour FAQ
-@@ -229,7 +229,7 @@ void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertMultiComponentToGray(InputPixelType* inputData, 
-                               int inputNumberOfComponents,
--                              OutputPixelType* outputData , size_t size)
-+                              OutputPixelType* outputData , std::size_t size)
- {
-   // 2 components assumed intensity and alpha
-   if(inputNumberOfComponents == 2)
-@@ -252,8 +252,8 @@ ConvertPixelBuffer<InputPixelType, Outpu
+--- InsightToolkit-3.20.0/Code/IO/itkImageIORegion.h.orig	2012-07-08 22:48:32.299211829 +0400
++++ InsightToolkit-3.20.0/Code/IO/itkImageIORegion.h	2012-07-08 22:51:10.637205170 +0400
+@@ -59,8 +59,8 @@
+ 
+   /** these types correspond to those of itk::Size, itk::Offset and itk::Index */
+   typedef size_t                  SizeValueType;
+-  typedef ptrdiff_t               IndexValueType;
+-  typedef ptrdiff_t               OffsetValueType;
++  typedef std::ptrdiff_t               IndexValueType;
++  typedef std::ptrdiff_t               OffsetValueType;
+ 
+ 
+   /** Index typedef support. An index is used to access pixel values. */
+--- InsightToolkit-3.20.0/Code/IO/itkConvertPixelBuffer.txx.orig	2012-07-08 23:05:34.094168852 +0400
++++ InsightToolkit-3.20.0/Code/IO/itkConvertPixelBuffer.txx	2012-07-08 23:06:04.297167520 +0400
+@@ -252,7 +252,7 @@
      // http://www.inforamp.net/~poynton/notes/colour_and_gamma/ColorFAQ.html
      // NOTE: The scale factors are converted to whole numbers for
      // precision
 -    ptrdiff_t diff = inputNumberOfComponents - 4;
--    InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
 +    std::ptrdiff_t diff = inputNumberOfComponents - 4;
-+    InputPixelType* endInput = inputData + size * (std::size_t)inputNumberOfComponents;
+     InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
      while(inputData != endInput)
        {
-       double tempval = 
-@@ -278,7 +278,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertGrayToRGB(InputPixelType* inputData, 
--                   OutputPixelType* outputData , size_t size)
-+                   OutputPixelType* outputData , std::size_t size)
- {
-   InputPixelType* endInput = inputData + size;
-   while(inputData != endInput)
-@@ -305,7 +305,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertRGBToRGB(InputPixelType* inputData, 
--                  OutputPixelType* outputData , size_t size)
-+                  OutputPixelType* outputData , std::size_t size)
- {
-   InputPixelType* endInput = inputData + size * 3;
-   while(inputData != endInput)
-@@ -331,7 +331,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertRGBAToRGB(InputPixelType* inputData, 
--                   OutputPixelType* outputData , size_t size)
-+                   OutputPixelType* outputData , std::size_t size)
- {  
-   InputPixelType* endInput = inputData + size* 4;
-   while(inputData != endInput)
-@@ -360,7 +360,7 @@ ConvertPixelBuffer<InputPixelType, Outpu
- ::ConvertMultiComponentToRGB(InputPixelType* inputData, 
-                              int inputNumberOfComponents,
-                              OutputPixelType* outputData , 
--                             size_t size)
-+                             std::size_t size)
- {
-   // assume intensity alpha
-   if(inputNumberOfComponents == 2)
-@@ -381,8 +381,8 @@ ConvertPixelBuffer<InputPixelType, Outpu
+--- InsightToolkit-3.20.0/Code/IO/itkConvertPixelBuffer.txx.orig	2012-07-08 23:19:26.816133839 +0400
++++ InsightToolkit-3.20.0/Code/IO/itkConvertPixelBuffer.txx	2012-07-08 23:20:19.956131692 +0400
+@@ -381,7 +381,7 @@
    // just skip the rest of the data
    else
      {
 -    ptrdiff_t diff = inputNumberOfComponents - 3;
--    InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
 +    std::ptrdiff_t diff = inputNumberOfComponents - 3;
-+    InputPixelType* endInput = inputData + size * (std::size_t)inputNumberOfComponents;
+     InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
      while(inputData != endInput)
        {
-       OutputConvertTraits::SetNthComponent(0, *outputData, 
-@@ -409,7 +409,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertGrayToRGBA(InputPixelType* inputData, 
--                    OutputPixelType* outputData , size_t size)
-+                    OutputPixelType* outputData , std::size_t size)
-   
- {
-   InputPixelType* endInput = inputData + size;
-@@ -439,7 +439,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertRGBToRGBA(InputPixelType* inputData, 
--                   OutputPixelType* outputData , size_t size)
-+                   OutputPixelType* outputData , std::size_t size)
- {
-   InputPixelType* endInput = inputData + size * 3;
-   while(inputData != endInput)
-@@ -469,7 +469,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertRGBAToRGBA(InputPixelType* inputData, 
--                    OutputPixelType* outputData , size_t size)
-+                    OutputPixelType* outputData , std::size_t size)
- {
-   InputPixelType* endInput = inputData + size*4;
-   while(inputData != endInput)
-@@ -500,7 +500,7 @@ ConvertPixelBuffer<InputPixelType, Outpu
- ::ConvertMultiComponentToRGBA(InputPixelType* inputData, 
-                               int inputNumberOfComponents,
-                               OutputPixelType* outputData , 
--                              size_t size)
-+                              std::size_t size)
- {
-   // equal weights for 2 components??
-   if(inputNumberOfComponents == 2)
-@@ -519,8 +519,8 @@ ConvertPixelBuffer<InputPixelType, Outpu
+@@ -519,7 +519,7 @@
      }
    else
      {
 -    ptrdiff_t diff = inputNumberOfComponents - 4;
--    InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
 +    std::ptrdiff_t diff = inputNumberOfComponents - 4;
-+    InputPixelType* endInput = inputData + size * (std::size_t)inputNumberOfComponents;
+     InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
      while(inputData != endInput)
        {
-       OutputConvertTraits::SetNthComponent(0, *outputData, 
-@@ -548,9 +548,9 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertTensor6ToTensor6(InputPixelType* inputData, 
--          OutputPixelType* outputData , size_t size)
-+          OutputPixelType* outputData , std::size_t size)
- {
--  for( size_t i=0; i< size; i++ )
-+  for( std::size_t i=0; i< size; i++ )
-     {
-     OutputConvertTraits::SetNthComponent( 0, *outputData,
-                          static_cast<OutputComponentType>(*inputData));
-@@ -579,7 +579,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertGrayToComplex(InputPixelType* inputData, 
--                   OutputPixelType* outputData , size_t size)
-+                   OutputPixelType* outputData , std::size_t size)
- {
-   InputPixelType* endInput = inputData + size;
-   while(inputData != endInput)
-@@ -603,7 +603,7 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertComplexToComplex(InputPixelType* inputData, 
--                    OutputPixelType* outputData , size_t size)
-+                    OutputPixelType* outputData , std::size_t size)
- {
-   InputPixelType* endInput = inputData + size*2;
-   while(inputData != endInput)
-@@ -628,9 +628,9 @@ template < typename InputPixelType,
- void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertTensor9ToTensor6(InputPixelType* inputData, 
--          OutputPixelType* outputData , size_t size)
-+          OutputPixelType* outputData , std::size_t size)
- {
--  for( size_t i=0; i< size; i++ )
-+  for( std::size_t i=0; i< size; i++ )
-     {
-     OutputConvertTraits::SetNthComponent( 0, *outputData, 
-         static_cast <  OutputComponentType >( *inputData ));
-@@ -659,10 +659,10 @@ ConvertPixelBuffer<InputPixelType, Outpu
- ::ConvertMultiComponentToComplex(InputPixelType* inputData, 
-                               int inputNumberOfComponents,
+@@ -661,7 +661,7 @@
                                OutputPixelType* outputData , 
--                              size_t size)
-+                              std::size_t size)
+                               size_t size)
  {
 -  ptrdiff_t diff = inputNumberOfComponents - 2;
--  InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
 +  std::ptrdiff_t diff = inputNumberOfComponents - 2;
-+  InputPixelType* endInput = inputData + size * (std::size_t)inputNumberOfComponents;
+   InputPixelType* endInput = inputData + size * (size_t)inputNumberOfComponents;
    while(inputData != endInput)
      {
-       OutputConvertTraits::SetNthComponent(0, *outputData, 
-@@ -685,10 +685,10 @@ void
- ConvertPixelBuffer<InputPixelType, OutputPixelType, OutputConvertTraits>
- ::ConvertVectorImage(InputPixelType* inputData, 
-                      int inputNumberOfComponents, 
--                     OutputPixelType* outputData , size_t size)
-+                     OutputPixelType* outputData , std::size_t size)
- {
--  size_t length = size* (size_t)inputNumberOfComponents;
--  for( size_t i=0; i< length; i++ )
-+  std::size_t length = size* (std::size_t)inputNumberOfComponents;
-+  for( std::size_t i=0; i< length; i++ )
-     {
-     OutputConvertTraits::SetNthComponent( 0, *outputData, 
-       static_cast <  OutputComponentType >( *inputData ));
---- InsightToolkit-3.20.0/Testing/Code/Common/itkNumericTraitsTest.cxx.orig	2011-11-16 20:13:26.567049596 -0200
-+++ InsightToolkit-3.20.0/Testing/Code/Common/itkNumericTraitsTest.cxx	2011-11-16 20:13:45.445150141 -0200
-@@ -91,8 +91,8 @@ int itkNumericTraitsTest(int, char* [] )
+--- InsightToolkit-3.20.0/Testing/Code/Common/itkNumericTraitsTest.cxx.orig	2012-07-08 23:37:03.940089398 +0400
++++ InsightToolkit-3.20.0/Testing/Code/Common/itkNumericTraitsTest.cxx	2012-07-08 23:42:34.271075485 +0400
+@@ -19,6 +19,7 @@
+ #endif
+ #include <iostream>
+ #include <vector>
++#include <cstddef>
  
-   // Check not fundamental types which we need
- 
--  CheckTraits("size_t", static_cast<size_t>(0));
--  CheckTraits("ptrdiff_t", static_cast<ptrdiff_t>(0));
-+  CheckTraits("std::size_t", static_cast<std::size_t>(0));
-+  CheckTraits("std::ptrdiff_t", static_cast<std::ptrdiff_t>(0));
-   typedef std::vector<int>::size_type VectorSizeType;
-   CheckTraits("std::vector<int>::size_type", static_cast<VectorSizeType>(0));
+ #include "itkNumericTraits.h"
  
