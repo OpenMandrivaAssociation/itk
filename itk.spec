@@ -29,7 +29,7 @@
 
 Name:		itk
 Version:	3.20.0
-Release:	4
+Release:	5
 Epoch:		2
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
