@@ -34,7 +34,7 @@ Epoch:		2
 Summary:	Medicine Insight Segmentation and Registration
 License:	BSD-like
 Group:		Sciences/Other
-URL:		http://www.itk.org
+URL:		https://www.itk.org
 Source0:	http://dl.sourceforge.net/sourceforge/itk/InsightToolkit-%{version}.tar.gz
 Source1:	http://dl.sourceforge.net/sourceforge/itk/ItkSoftwareGuide-2.4.0.pdf.bz2
 Source2:	http://dl.sourceforge.net/sourceforge/itk/DoxygenInsightToolkit-%{version}.tar.gz
